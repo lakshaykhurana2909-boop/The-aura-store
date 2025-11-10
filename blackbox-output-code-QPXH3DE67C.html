@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Clothing Store</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        header { background-color: #333; color: white; text-align: center; padding: 1rem; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .product { background: white; border: 1px solid #ddd; padding: 1rem; text-align: center; }
+        .product img { max-width: 100%; height: 200px; object-fit: cover; }
+        button { background: #28a745; color: white; border: none; padding: 0.5rem; cursor: pointer; }
+        button:hover { background: #218838; }
+        #cart { position: fixed; top: 10px; right: 10px; background: #fff; border: 1px solid #ddd; padding: 1rem; max-width: 300px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to My Clothing Store</h1>
+    </header>
+    <div class="container">
+        <div class="products" id="products"></div>
+    </div>
+    <div id="cart">
+        <h3>Cart</h3>
+        <ul id="cart-items"></ul>
+        <p>Total: $<span id="total">0</span></p>
+        <button onclick="checkout()">Checkout</button>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "T-Shirt", price: 20, image: "https://via.placeholder.com/250x200?text=T-Shirt" },
+            { id: 2, name: "Jeans", price: 50, image: "https://via.placeholder.com/250x200?text=Jeans" },
+            { id: 3, name: "Dress", price: 40, image: "https://via.placeholder.com/250x200?text=Dress" },
+            // Add more products here
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const productsContainer = document.getElementById('products');
+        const cartItems = document.getElementById('cart-items');
+        const totalElement = document.getElementById('total');
+
+        function renderProducts() {
+            productsContainer.innerHTML = products.map(product => `
+                <div class="product">
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>$${product.price}</p>
+                    <button onclick="addToCart(${product.id})">Add to Cart</button>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        function renderCart() {
+            cartItems.innerHTML = cart.map(item => `<li>${item.name} - $${item.price}</li>`).join('');
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            totalElement.textContent = total;
+        }
+
+        function checkout() {
+            alert('Checkout not implemented yet. Integrate a payment gateway like Stripe!');
+            cart = [];
+            localStorage.removeItem('cart');
+            renderCart();
+        }
+
+        renderProducts();
+        renderCart();
+    </script>
+</body>
+</html>
